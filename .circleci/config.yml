@@ -842,18 +842,18 @@ jobs:
 
   t_ems_ext_hardhat:
     docker:
-      - image: << pipeline.parameters.ubuntu-2004-docker-image >>
+      - image: circleci/node
     environment:
       TERM: xterm
       HARDHAT_TESTS_SOLC_PATH: /tmp/workspace/soljson.js
     steps:
       - attach_workspace:
           at: /tmp/workspace
-      - run:
-          name: Install node.js and yarn
-          command: |
-            apt-get update
-            apt-get install --assume-yes --no-install-recommends nodejs yarn
+      #- run:
+      #    name: Install node.js and yarn
+      #    command: |
+      #      apt-get update
+      #      apt-get install --assume-yes --no-install-recommends nodejs yarn
       - run: git clone --depth 1 https://github.com/nomiclabs/hardhat.git
       - run:
           name: Create a link to the compiler binary in a place where Hardhat can find it
