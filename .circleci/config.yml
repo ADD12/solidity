@@ -858,6 +858,7 @@ jobs:
       - run:
           name: Create a link to the compiler binary in a place where Hardhat can find it
           command: |
+            mkdir hardhat/packages/hardhat-core/test/internal/hardhat-network/stack-traces/compilers/
             ln -s /tmp/workspace/soljson.js hardhat/packages/hardhat-core/test/internal/hardhat-network/stack-traces/compilers/
       - run: cd hardhat && yarn build
       - run:
