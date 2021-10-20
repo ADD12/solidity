@@ -845,22 +845,23 @@ jobs:
       - image: circleci/node
     environment:
       TERM: xterm
-      HARDHAT_TESTS_SOLC_PATH: /tmp/workspace/soljson.js
+      HARDHAT_TESTS_SOLC_PATH: soljson.js
     steps:
+      - checkout
       - attach_workspace:
           at: /tmp/workspace
-      #- run:
-      #    name: Install node.js and yarn
-      #    command: |
-      #      apt-get update
-      #      apt-get install --assume-yes --no-install-recommends nodejs yarn
       - run: git clone --depth 1 https://github.com/nomiclabs/hardhat.git
       - run:
           name: Create a link to the compiler binary in a place where Hardhat can find it
           command: |
             mkdir hardhat/packages/hardhat-core/test/internal/hardhat-network/stack-traces/compilers/
             ln -s /tmp/workspace/soljson.js hardhat/packages/hardhat-core/test/internal/hardhat-network/stack-traces/compilers/
-      - run: cd hardhat && yarn build
+      - run:
+          name: Install dependencies and build Hardhat
+          command: |
+            cd hardhat
+            yarn
+            yarn build
       - run:
           name: Run hardhat-core test suite
           command: |
@@ -1251,8 +1252,10 @@ workflows:
       - t_ubu_ubsan_clang: *workflow_ubuntu2004_ubsan_clang
       - t_ubu_ubsan_clang_cli: *workflow_ubuntu2004_ubsan_clang
 
-      # Emscripten build and tests that take more than 15 minutes to execute
+      # Emscripten build and tests that take more than 15 minutes to execute and ones that should
+      # not block PRs when the upstream project happens to break.
       - b_ems: *workflow_trigger_on_tags
+      - t_ems_ext_hardhat: *workflow_emscripten
       - t_ems_ext:
           <<: *workflow_emscripten
           name: t_ems_test_ext_colony
